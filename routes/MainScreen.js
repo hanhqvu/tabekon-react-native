@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Swiper from "react-native-swiper";
 import { StyleSheet, Text, View, Image, Dimensions } from "react-native";
-import { Button } from "react-native-paper";
+import { Button, Surface, Headline } from "react-native-paper";
 import axios from "axios";
 
 const Width = Math.ceil(Dimensions.get("window").width * 0.9);
@@ -10,6 +10,7 @@ const Height = Math.floor(Dimensions.get("window").height * 0.6);
 export default function MainScreen() {
 	//State
 	const [japanese, setJapanese] = useState([]);
+	const [chosenIndex, setChosenIndex] = useState([]);
 
 	//Effect
 	useEffect(() => {
@@ -19,27 +20,45 @@ export default function MainScreen() {
 		})();
 	}, []);
 
+	//Handler
+	function capitalize(string) {
+		const firstChar = string[0].toUpperCase();
+		const remainChar = string.slice(1);
+		return firstChar + remainChar;
+	}
+
 	return (
 		<>
 		<View style={styles.swiper}>
-			<Text style={{ textAlign: "center", marginTop: 5 }}>
-				What do you think about this dish?
-			</Text>
 			<Swiper
 				style={styles.wrapper}
 				showsButtons={true}
 				loop={true}
 				showsPagination={false}
+				onIndexChanged={(index) => setCurrentIndex(index)}
 			>
 				{japanese.map((el, index) => {
 					return (
 						<View key={index} style={styles.slide}>
-							<Image
-								source={{
-									uri: `https://firebasestorage.googleapis.com/v0/b/tabekon-1915c.appspot.com/o/${el.image_path}?alt=media&token=4d0b63c7-51cd-4d44-ba65-94a94e2b3028`,
-								}}
-								style={{ width: Width - 50, height: Height - 50 }}
-							/>
+							<Surface elevation={5} style={styles.imageContainer}>
+								<Image
+									source={{
+										uri: `https://firebasestorage.googleapis.com/v0/b/tabekon-1915c.appspot.com/o/${el.image_path}?alt=media&token=4d0b63c7-51cd-4d44-ba65-94a94e2b3028`,
+									}}
+									style={{
+										width: Width - 20,
+										height: 300,
+									}}
+								/>
+							</Surface>
+							<View>
+								<Headline>{capitalize(el.name)}</Headline>
+								<Text>Main Ingredient: {capitalize(el.main_ingredient)}</Text>
+								<Text>
+									Other Ingredient:
+									{el.sub_ingredient ? ` ${capitalize(el.sub_ingredient)}` : "None"}
+								</Text>
+							</View>
 						</View>
 					);
 				})}
@@ -74,6 +93,8 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: "center",
 		alignItems: "center",
-		backgroundColor: "#9DD6EB",
+	},
+	imageContainer: {
+		marginBottom: 10,
 	},
 });
