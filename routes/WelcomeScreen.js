@@ -4,7 +4,14 @@ import { Button } from "react-native-paper";
 
 export default function WelcomeScreen({ navigation }) {
 	return (
-		<View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+		<View
+			style={{
+				flex: 1,
+				flexDirection: "column",
+				alignItems: "center",
+				justifyContent: "center",
+			}}
+		>
 			<View
 				style={{
 					paddingBottom: 15,
@@ -16,7 +23,11 @@ export default function WelcomeScreen({ navigation }) {
 				<Text style={styles.text}>Feeling confused? Don't know what to order?</Text>
 				<Text style={styles.text}>Don't worry, our app will help you!</Text>
 			</View>
-			<Button mode="contained" onPress={() => navigation.navigate("Main")}>
+			<Button
+				style={{ top: 250 }}
+				mode="contained"
+				onPress={() => navigation.navigate("Main")}
+			>
 				Let's get started
 			</Button>
 		</View>
