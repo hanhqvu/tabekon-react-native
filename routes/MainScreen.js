@@ -3,14 +3,15 @@ import Swiper from "react-native-swiper";
 import { StyleSheet, Text, View, Image, Dimensions } from "react-native";
 import { Button, Surface, Headline } from "react-native-paper";
 import axios from "axios";
+import _ from "underscore";
 
 const Width = Math.ceil(Dimensions.get("window").width * 0.9);
-const Height = Math.floor(Dimensions.get("window").height * 0.6);
 
 export default function MainScreen() {
 	//State
 	const [japanese, setJapanese] = useState([]);
 	const [chosenIndex, setChosenIndex] = useState([]);
+	const [currentIndex, setCurrentIndex] = useState(0);
 
 	//Effect
 	useEffect(() => {
@@ -37,7 +38,7 @@ export default function MainScreen() {
 				showsPagination={false}
 				onIndexChanged={(index) => setCurrentIndex(index)}
 			>
-				{japanese.map((el, index) => {
+				{_.shuffle(japanese).map((el, index) => {
 					return (
 						<View key={index} style={styles.slide}>
 							<Surface elevation={5} style={styles.imageContainer}>
@@ -48,23 +49,31 @@ export default function MainScreen() {
 									style={{
 										width: Width - 20,
 										height: 300,
+										borderRadius: 20,
 									}}
 								/>
+								<View style={{ paddingLeft: 20 }}>
+									<Headline>{capitalize(el.name)}</Headline>
+									<Text>Main Ingredient: {capitalize(el.main_ingredient)}</Text>
+									<Text>
+										Other Ingredient:
+										{el.sub_ingredient ? ` ${capitalize(el.sub_ingredient)}` : "None"}
+									</Text>
+								</View>
 							</Surface>
-							<View>
-								<Headline>{capitalize(el.name)}</Headline>
-								<Text>Main Ingredient: {capitalize(el.main_ingredient)}</Text>
-								<Text>
-									Other Ingredient:
-									{el.sub_ingredient ? ` ${capitalize(el.sub_ingredient)}` : "None"}
-								</Text>
-							</View>
 						</View>
 					);
 				})}
 			</Swiper>
 		</View>
 		<View style={styles.buttonContainer}>
+			{_.contains(chosenIndex, currentIndex) ? (
+				<Button icon="heart" mode="contained" style={styles.button}>Loved</Button>
+			) : (
+				<Button icon="heart-outline" mode="contained" style={styles.button}>
+					Love?
+				</Button>
+			)}
 			<Button
 				icon="close-circle-outline"
 				mode="contained"
@@ -72,7 +81,6 @@ export default function MainScreen() {
 			>
 				Skip
 			</Button>
-			<Button icon="heart" mode="contained" style={styles.button}>Love</Button>
 		</View></>
 	);
 }
@@ -95,6 +103,7 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 	},
 	imageContainer: {
-		marginBottom: 10,
+		borderRadius: 20,
+		paddingBottom: 10,
 	},
 });
