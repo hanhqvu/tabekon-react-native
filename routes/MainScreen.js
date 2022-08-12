@@ -15,7 +15,7 @@ import _ from "underscore";
 const ImageWidth = Math.ceil(Dimensions.get("window").width * 0.8);
 const FullWidth = Dimensions.get("window").width * 0.9;
 
-export default function MainScreen() {
+export default function MainScreen({ navigation }) {
 	//State
 	const [japanese, setJapanese] = useState([]);
 	const [chosenIndex, setChosenIndex] = useState([]);
@@ -67,7 +67,7 @@ export default function MainScreen() {
 					return (
 						<View style={styles.slide}>
 							<Surface elevation={5} style={styles.imageContainer}>
-								<Image
+								{/* <Image
 									source={{
 										uri: `https://firebasestorage.googleapis.com/v0/b/tabekon-1915c.appspot.com/o/${item.image_path}?alt=media&token=4d0b63c7-51cd-4d44-ba65-94a94e2b3028`,
 									}}
@@ -77,7 +77,7 @@ export default function MainScreen() {
 										borderRadius: 20,
 										resizeMode: "cover",
 									}}
-								/>
+								/> */}
 								<View style={{ padding: 15 }}>
 									<Headline>{capitalize(item.name)}</Headline>
 									<Text>Main Ingredient: {capitalize(item.main_ingredient)}</Text>
@@ -113,7 +113,15 @@ export default function MainScreen() {
 			>
 				Remove all
 			</Button>
-			<Button icon="playlist-star" mode="contained" style={styles.button}>
+			<Button
+				icon="playlist-star"
+				mode="contained"
+				style={styles.button}
+				onPress={() =>
+					navigation.navigate("List", {
+						data: japanese.filter((value, index) => chosenIndex.includes(index)),
+					})}
+			>
 				See list
 			</Button>
 		</View></>
