@@ -1,25 +1,35 @@
-import React, { useState, useEffect } from "react";
-import Swiper from "react-native-swiper";
-import { StyleSheet, Text, View, Image, Dimensions } from "react-native";
+import React, { useState, useEffect, useRef } from "react";
+import {
+	StyleSheet,
+	Text,
+	View,
+	Image,
+	Dimensions,
+	FlatList,
+	Animated,
+} from "react-native";
 import { Button, Surface, Headline } from "react-native-paper";
 import axios from "axios";
 import _ from "underscore";
 
-const Width = Math.ceil(Dimensions.get("window").width * 0.9);
+const ImageWidth = Math.ceil(Dimensions.get("window").width * 0.8);
+const FullWidth = Dimensions.get("window").width * 0.9;
 
 export default function MainScreen() {
 	//State
 	const [japanese, setJapanese] = useState([]);
 	const [chosenIndex, setChosenIndex] = useState([]);
-	const [currentIndex, setCurrentIndex] = useState(0);
 
 	//Effect
 	useEffect(() => {
 		(async () => {
 			const res = await axios.get("https://tabekon.herokuapp.com/api/japanese");
-			setJapanese(res.data);
+			setJapanese(_.shuffle(res.data));
 		})();
 	}, []);
+
+	//Ref
+	const scrollX = useRef(new Animated.Value(0)).current;
 
 	//Handler
 	function capitalize(string) {
@@ -28,58 +38,83 @@ export default function MainScreen() {
 		return firstChar + remainChar;
 	}
 
+	function addOrRemove(key) {
+		if (chosenIndex.length === 3 && !chosenIndex.includes(key)) {
+			return;
+		}
+		if (chosenIndex.includes(key)) {
+			setChosenIndex(chosenIndex.filter((val) => val !== key));
+			return;
+		}
+		setChosenIndex([...chosenIndex, key]);
+	}
+
+	function removeAll() {
+		setChosenIndex([]);
+	}
+
 	return (
 		<>
 		<View style={styles.swiper}>
-			<Swiper
-				style={styles.wrapper}
-				showsButtons={true}
-				loop={true}
-				showsPagination={false}
-				onIndexChanged={(index) => setCurrentIndex(index)}
-			>
-				{_.shuffle(japanese).map((el, index) => {
+			<Animated.FlatList
+				horizontal={true}
+				keyExtractor={(item) => item.name}
+				data={japanese}
+				onScroll={Animated.event([
+					{ nativeEvent: { contentOffset: { x: scrollX } } },
+				], { useNativeDriver: true })}
+				renderItem={({ item, index, separators }) => {
 					return (
-						<View key={index} style={styles.slide}>
+						<View style={styles.slide}>
 							<Surface elevation={5} style={styles.imageContainer}>
 								<Image
 									source={{
-										uri: `https://firebasestorage.googleapis.com/v0/b/tabekon-1915c.appspot.com/o/${el.image_path}?alt=media&token=4d0b63c7-51cd-4d44-ba65-94a94e2b3028`,
+										uri: `https://firebasestorage.googleapis.com/v0/b/tabekon-1915c.appspot.com/o/${item.image_path}?alt=media&token=4d0b63c7-51cd-4d44-ba65-94a94e2b3028`,
 									}}
 									style={{
-										width: Width - 20,
+										width: ImageWidth,
 										height: 300,
 										borderRadius: 20,
+										resizeMode: "cover",
 									}}
 								/>
-								<View style={{ paddingLeft: 20 }}>
-									<Headline>{capitalize(el.name)}</Headline>
-									<Text>Main Ingredient: {capitalize(el.main_ingredient)}</Text>
+								<View style={{ padding: 15 }}>
+									<Headline>{capitalize(item.name)}</Headline>
+									<Text>Main Ingredient: {capitalize(item.main_ingredient)}</Text>
 									<Text>
 										Other Ingredient:
-										{el.sub_ingredient ? ` ${capitalize(el.sub_ingredient)}` : "None"}
+										{item.sub_ingredient ? ` ${capitalize(item.sub_ingredient)}` : "None"}
 									</Text>
+									<Button
+										icon={
+											chosenIndex.includes(index) ? "heart" : "heart-outline"
+										}
+										mode="contained"
+										style={{ marginTop: 10 }}
+										onPress={() => {
+											addOrRemove(index);
+										}}
+									>
+										{chosenIndex.includes(index) ? "Loved" : "Love?"}
+									</Button>
 								</View>
 							</Surface>
 						</View>
 					);
-				})}
-			</Swiper>
+				}}
+			/>
 		</View>
 		<View style={styles.buttonContainer}>
-			{_.contains(chosenIndex, currentIndex) ? (
-				<Button icon="heart" mode="contained" style={styles.button}>Loved</Button>
-			) : (
-				<Button icon="heart-outline" mode="contained" style={styles.button}>
-					Love?
-				</Button>
-			)}
 			<Button
 				icon="close-circle-outline"
 				mode="contained"
 				style={styles.button}
+				onPress={() => removeAll()}
 			>
-				Skip
+				Remove all
+			</Button>
+			<Button icon="playlist-star" mode="contained" style={styles.button}>
+				See list
 			</Button>
 		</View></>
 	);
@@ -90,17 +125,19 @@ const styles = StyleSheet.create({
 		flex: 8,
 	},
 	buttonContainer: {
+		flex: 1,
 		flexDirection: "row",
-		justifyContent: "center",
+		justifyContent: "space-evenly",
+		alignItems: "baseline",
 	},
 	button: {
 		alignItems: "center",
-		margin: 10,
 	},
 	slide: {
 		flex: 1,
 		justifyContent: "center",
 		alignItems: "center",
+		width: FullWidth,
 	},
 	imageContainer: {
 		borderRadius: 20,
