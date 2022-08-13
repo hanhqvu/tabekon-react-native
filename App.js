@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import MainScreen from "./routes/MainScreen";
 import WelcomeScreen from "./routes/WelcomeScreen";
 import ListScreen from "./routes/ListScreen";
+import SelectionScreen from "./routes/SelectionScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -15,12 +16,13 @@ export default function App() {
 				<Stack.Navigator>
 					<Stack.Screen name="Welcome" component={WelcomeScreen} />
 					<Stack.Screen
-						name="Main"
-						component={MainScreen}
+						name="Selection"
+						component={SelectionScreen}
 						options={{
 							headerBackVisible: false,
 						}}
 					/>
+					<Stack.Screen name="Main" component={MainScreen} />
 					<Stack.Screen name="List" component={ListScreen} />
 				</Stack.Navigator>
 				<StatusBar style="auto" />

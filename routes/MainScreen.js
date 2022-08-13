@@ -67,17 +67,17 @@ export default function MainScreen({ navigation }) {
 					return (
 						<View style={styles.slide}>
 							<Surface elevation={5} style={styles.imageContainer}>
-								{/* <Image
-									source={{
-										uri: `https://firebasestorage.googleapis.com/v0/b/tabekon-1915c.appspot.com/o/${item.image_path}?alt=media&token=4d0b63c7-51cd-4d44-ba65-94a94e2b3028`,
-									}}
+								<Image
+									// source={{
+									// 	uri: `https://firebasestorage.googleapis.com/v0/b/tabekon-new.appspot.com/o/${item.image_path}?alt=media&token=4d0b63c7-51cd-4d44-ba65-94a94e2b3028`,
+									// }}
 									style={{
 										width: ImageWidth,
 										height: 300,
 										borderRadius: 20,
 										resizeMode: "cover",
 									}}
-								/> */}
+								/>
 								<View style={{ padding: 15 }}>
 									<Headline>{capitalize(item.name)}</Headline>
 									<Text>Main Ingredient: {capitalize(item.main_ingredient)}</Text>

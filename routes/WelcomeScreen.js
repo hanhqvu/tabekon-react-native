@@ -26,7 +26,7 @@ export default function WelcomeScreen({ navigation }) {
 			<Button
 				style={{ top: 250 }}
 				mode="contained"
-				onPress={() => navigation.navigate("Main")}
+				onPress={() => navigation.navigate("Selection")}
 			>
 				Let's get started
 			</Button>

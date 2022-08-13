@@ -31,13 +31,21 @@ export default function ListScreen({ route }) {
 								key={index}
 								elevation={5}
 								mode="contained"
-								style={{ width: CardWidth, marginTop: 20 }}
+								style={{ width: CardWidth, marginTop: 20, borderRadius: 20 }}
 							>
-								<Card.Cover source={{ uri: "https://picsum.photos/700" }} />
+								<Card.Cover
+									source={{
+										uri: `https://firebasestorage.googleapis.com/v0/b/tabekon-1915c.appspot.com/o/${item.image_path}?alt=media&token=4d0b63c7-51cd-4d44-ba65-94a94e2b3028`,
+									}}
+								/>
 								<Card.Title title={capitalize(item.name)} />
 								<Card.Content>
 									{/* <Title>{item.name}</Title> */}
-									<Paragraph>Card content</Paragraph>
+									<Text>Main Ingredient: {capitalize(item.main_ingredient)}</Text>
+									<Text>
+										Other Ingredient:
+										{item.sub_ingredient ? ` ${capitalize(item.sub_ingredient)}` : "None"}
+									</Text>
 								</Card.Content>
 							</Card>
 						</View>
