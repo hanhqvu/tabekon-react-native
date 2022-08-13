@@ -51,7 +51,7 @@ export default function Selection({ navigation }) {
 				mode="contained"
 				onPress={() => {
 					navigation.navigate("Main", {
-						data: selected,
+						data: selected.map((el) => chips[el]),
 					});
 				}}
 			>
