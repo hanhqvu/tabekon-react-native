@@ -1,19 +1,46 @@
 import { View, Text, StyleSheet } from "react-native";
 import React, { useState } from "react";
 import { Chip, Button } from "react-native-paper";
+import _ from "underscore";
 
 export default function Selection({ navigation }) {
 	const [selected, setSelected] = useState([]);
 
-	// function toggleSelected() {
-	// 	if
-	// }
+	const chips = {
+		jpn: "Japanese",
+		vn: "Vietnamese",
+		thai: "Thailand",
+	};
+	function toggleSelected(key) {
+		if (selected.includes(key)) {
+			setSelected(selected.filter((value) => value !== key));
+			return;
+		}
+		setSelected([...selected, key]);
+	}
 
 	return (
 		<View style={styles.container}>
-			<View>
-				<Text>Cuisine</Text>
-				<Chip id="japanese-chip" mode="outlined" selectedColor="blue">Japanse</Chip>
+			<Text>Cuisine</Text>
+			<View
+				style={{
+					flexDirection: "row",
+					alignItems: "center",
+					justifyContent: "center",
+				}}
+			>
+				{_.map(chips, (value, index) => {
+					return (
+						<Chip
+							key={index}
+							mode="outlined"
+							selected={selected.includes(index)}
+							onPress={() => toggleSelected(index)}
+						>
+							{value}
+						</Chip>
+					);
+				})}
 			</View>
 			<Text>Category</Text>
 			<Text>Placeholder</Text>
@@ -22,7 +49,11 @@ export default function Selection({ navigation }) {
 			<Button
 				style={{ top: 250 }}
 				mode="contained"
-				onPress={() => navigation.navigate("Main")}
+				onPress={() => {
+					navigation.navigate("Main", {
+						data: selected,
+					});
+				}}
 			>
 				Selection completed
 			</Button>

@@ -15,16 +15,21 @@ import _ from "underscore";
 const ImageWidth = Math.ceil(Dimensions.get("window").width * 0.8);
 const FullWidth = Dimensions.get("window").width * 0.9;
 
-export default function MainScreen({ navigation }) {
+export default function MainScreen({ route, navigation }) {
+	const { data } = route.params;
+
 	//State
-	const [japanese, setJapanese] = useState([]);
+	const [list, setList] = useState([]);
 	const [chosenIndex, setChosenIndex] = useState([]);
 
 	//Effect
 	useEffect(() => {
 		(async () => {
-			const res = await axios.get("https://tabekon.herokuapp.com/api/japanese");
-			setJapanese(_.shuffle(res.data));
+			const res =
+				data.length === 1 ? await axios.get(
+					`https://tabekon.herokuapp.com/api/${data[0]}`,
+				) : await axios.get("https://tabekon.herokuapp.com/api/multiple");
+			setList(_.shuffle(res.data));
 		})();
 	}, []);
 
@@ -59,7 +64,7 @@ export default function MainScreen({ navigation }) {
 			<Animated.FlatList
 				horizontal={true}
 				keyExtractor={(item) => item.name}
-				data={japanese}
+				data={list}
 				onScroll={Animated.event([
 					{ nativeEvent: { contentOffset: { x: scrollX } } },
 				], { useNativeDriver: true })}
@@ -119,7 +124,7 @@ export default function MainScreen({ navigation }) {
 				style={styles.button}
 				onPress={() =>
 					navigation.navigate("List", {
-						data: japanese.filter((value, index) => chosenIndex.includes(index)),
+						data: list.filter((value, index) => chosenIndex.includes(index)),
 					})}
 			>
 				See list
